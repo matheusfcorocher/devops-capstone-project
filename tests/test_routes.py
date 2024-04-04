@@ -202,3 +202,32 @@ class TestAccountService(TestCase):
         account_id = 4500
         response = self.client.put(f"{BASE_URL}/{account_id}")
         self.assertEqual(response.status_code, 404)
+    
+    # ----------------------------------------------------------
+    # TEST DELETE
+    # ----------------------------------------------------------
+
+    def test_delete_account(self):
+        """It should delete account"""
+        test_account = self._create_accounts(1)[0]
+
+        response = self.client.delete(f"{BASE_URL}/{test_account.id}")
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(len(response.data), 0)
+
+        response = self.client.get(f"{BASE_URL}/{test_account.id}")
+        self.assertEqual(response.status_code, 404)
+        
+        response = self.client.get(f"{BASE_URL}")
+        data = response.get_json()
+        
+        self.assertEqual(len(data), 0)
+
+
+
+    def test_delete_account_with_non_existent_id(self):
+        """It should get not found error when isnt found any account to delete"""
+        account_id = 4500
+        response = self.client.delete(f"{BASE_URL}/{account_id}")
+        self.assertEqual(response.status_code, 404)
