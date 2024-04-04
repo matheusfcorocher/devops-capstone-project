@@ -125,21 +125,7 @@ class TestAccountService(TestCase):
 
     def test_get_all_accounts(self):
         """It should get all accounts"""
-        account = AccountFactory()
-        response = self.client.post(
-            BASE_URL,
-            json=account.serialize(),
-            content_type="application/json"
-        )
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        account = AccountFactory()
-        response = self.client.post(
-            BASE_URL,
-            json=account.serialize(),
-            content_type="application/json"
-        )
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self._create_accounts(2)
 
         resp = self.client.get(BASE_URL)
         self.assertEqual(resp.status_code, 200)
