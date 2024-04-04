@@ -172,3 +172,33 @@ class TestAccountService(TestCase):
         account_id = 4500
         response = self.client.get(f"{BASE_URL}/{account_id}")
         self.assertEqual(response.status_code, 404)
+    
+    # ----------------------------------------------------------
+    # TEST UPDATE
+    # ----------------------------------------------------------
+
+    def test_update_account(self):
+        """It should update account"""
+        test_account = self._create_accounts(1)[0]
+
+        updated_account = AccountFactory()
+        updated_account = updated_account.serialize()
+        del updated_account["id"]
+        del updated_account["date_joined"]
+
+        response = self.client.put(f"{BASE_URL}/{test_account.id}",
+            json=updated_account,
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(data["name"], updated_account["name"])
+        self.assertEqual(data["email"], updated_account["email"])
+        self.assertEqual(data["address"], updated_account["address"])
+        self.assertEqual(data["phone_number"], updated_account["phone_number"])
+
+    def test_update_account_with_non_existent_id(self):
+        """It should get not found error when isnt found any account to update"""
+        account_id = 4500
+        response = self.client.put(f"{BASE_URL}/{account_id}")
+        self.assertEqual(response.status_code, 404)
